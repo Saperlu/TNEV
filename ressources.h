@@ -9,10 +9,16 @@
 #define MARGE 40
 #define COEF 0,5
 #define VITESSEMAX 1024
-#define DELAI 500
+#define TEMPS_AVANC 500
+
+#define PUISSANCE_CHARG 1024
+#define TEMPS_CHARG 2000
+#define PUISSANCE_ENVOI 1024
+#define TEMPS_ENVOI 2000
 #endif
 
-const int bouState = 1,
+const int bouState1 = 0,
+          bouState2 = 1,
           phoGauche = 2,
           phoDroite = 3,
 
@@ -20,6 +26,7 @@ const int bouState = 1,
           pinRouGau2 = 5,
           pinPuiRouGau = 0,
 
+// Catapulte à revoir
           pinCata1  = pinRouGau1,
           pinCata2  = pinRouGau2,
           pinPuiCata  = pinPuiRouGau,
@@ -38,13 +45,19 @@ void stop() {
 }
 
 // Tire sur la ficelle avec le moteur Cata
-void chargerCatapulte() {
-
+void chargerCatapulte() { // A REVOIR
+  digitalWrite(pinCata1, HIGH);
+  digitalWrite(pinCata2, LOW);
+  analogWrite(pinPuiCata, PUISSANCE_CHARG);
+  delay(TEMPS_CHARG);
 }
 
 // Relache la ficelle avec le moteur Cata
-void envoyerCatapulte() {
-
+void envoyerCatapulte() { // A REVOIR
+  digitalWrite(pinCata1, LOW);
+  digitalWrite(pinCata2, LOW);
+  analogWrite(pinPuiCata, PUISSANCE_ENVOI);
+  delay(TEMPS_ENVOI);
 }
 
 
@@ -91,5 +104,5 @@ void avancer(int direction) {
     roueGauche(VITESSEMAX);
     roueDroite(VITESSEMAX);
   }
-  delay(DELAI);
+  delay(TEMPS_AVANC);
 }
