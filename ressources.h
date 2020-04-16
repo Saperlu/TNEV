@@ -6,6 +6,7 @@
 #define CATAPULTE 1
 #define SLALOM 2
 
+
 #define MARGE 40
 #define COEF 0,5
 #define VITESSEMAX 1024
@@ -33,11 +34,55 @@ const int bouState1 = 0,
 
           pinRouDroi1 = 6,
           pinRouDroi2 = 7,
-          pinPuiRouDroi = 1;
+          pinPuiRouDroi = 1,
 
+          pinLed = 8;
 
-int getMode() {
-  return 0;
+// Lis les valeurs de bouton 1 et 2
+// Bouton 1 : Alternance STOP / SLALOM
+// Bouton 2 : CATAPULTE
+// Passage de STOP à SLALOM : La led clignote 2 sec avant de démarrer 
+int getMode(int mode, int *previousState1, int *previousState2) {
+  int state1 = digitalRead(bouState1);
+  int state2 = digitalRead(bouState2);
+
+  if (state1 != *previousState1 && state1 == HIGH) {
+    if (mode == STOP) {
+      mode = SLALOM;
+      for (size_t i = 0; i < 4; i++) {
+        digitalWrite(pinLed, HIGH);
+        delay(250);
+        digitalWrite(pinLed, LOW);
+        delay(250);
+      }
+    } else {
+      mode = STOP;
+    }
+  }
+  if (state2 != previousState2 && state2 == HIGH) {
+    mode = CATAPULTE;
+  }
+
+  *previousState1 = state1;
+  *previousState2 = state2;
+  return mode;
+}
+
+int setLedState(int previousStateLed, int mode) {
+  int stateLed;
+  if (mode == CATAPULTE) { // Eteinte
+    stateLed = LOW;
+  } else if (mode == SLALOM) { // Clignote
+    if (previousStateLed == HIGH) {
+      stateLed = LOW;
+    } else {
+      stateLed = HIGH;
+    }
+  } else { // Allumée
+    stateLed = HIGH;
+  }
+  digitalWrite(pinLed, stateLed);
+  return stateLed;
 }
 
 void stop() {
