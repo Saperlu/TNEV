@@ -19,6 +19,7 @@ void setup() {
   pinMode(bouState1, INPUT);
   pinMode(bouState2, INPUT);
 
+  initServo();
 }
 
 void loop() {
@@ -27,8 +28,7 @@ void loop() {
   LedState = setLedState(LedState, mode);
 
   if (mode == CATAPULTE) {
-    chargerCatapulte();
-    envoyerCatapulte();
+    alternerCatapulte();
     mode = STOP;
 
   } else if (mode == SLALOM) {

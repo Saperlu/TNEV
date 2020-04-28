@@ -2,6 +2,9 @@
 
 #ifndef RESSOURCES
 #define RESSOURCES
+
+#include <Servo.h>
+
 #define STOP 0
 #define CATAPULTE 1
 #define SLALOM 2
@@ -16,7 +19,13 @@
 #define TEMPS_CHARG 2000
 #define PUISSANCE_ENVOI 1024
 #define TEMPS_ENVOI 2000
+
+#define ANGLE_ENCL 10
+#define ANGLE_DECL 20
 #endif
+
+Servo myServo;
+int angle = 0;
 
 const int bouState1 = 0,
           bouState2 = 1,
@@ -27,21 +36,19 @@ const int bouState1 = 0,
           pinRouGau2 = 5,
           pinPuiRouGau = 0,
 
-// Catapulte à revoir
-          pinCata1  = pinRouGau1,
-          pinCata2  = pinRouGau2,
-          pinPuiCata  = pinPuiRouGau,
-
           pinRouDroi1 = 6,
           pinRouDroi2 = 7,
           pinPuiRouDroi = 1,
+
+// Catapulte à revoir
+          pinServo = 3,
 
           pinLed = 8;
 
 // Lis les valeurs de bouton 1 et 2
 // Bouton 1 : Alternance STOP / SLALOM
 // Bouton 2 : CATAPULTE
-// Passage de STOP à SLALOM : La led clignote 2 sec avant de démarrer 
+// Passage de STOP à SLALOM : La led clignote 2 sec avant de démarrer
 int getMode(int mode, int *previousState1, int *previousState2) {
   int state1 = digitalRead(bouState1);
   int state2 = digitalRead(bouState2);
@@ -89,21 +96,21 @@ void stop() {
   delay(1000);
 }
 
-// Tire sur la ficelle avec le moteur Cata
-void chargerCatapulte() { // A REVOIR
-  digitalWrite(pinCata1, HIGH);
-  digitalWrite(pinCata2, LOW);
-  analogWrite(pinPuiCata, PUISSANCE_CHARG);
-  delay(TEMPS_CHARG);
+void initServo() {
+  myServo.attach(pinServo);
 }
 
-// Relache la ficelle avec le moteur Cata
-void envoyerCatapulte() { // A REVOIR
-  digitalWrite(pinCata1, LOW);
-  digitalWrite(pinCata2, LOW);
-  analogWrite(pinPuiCata, PUISSANCE_ENVOI);
-  delay(TEMPS_ENVOI);
+// Coince/Relache la ficelle avec le servo
+void alternerCatapulte() {
+  if (angle == ANGLE_DECL) {
+    angle = ANGLE_ENCL;
+    myServo.write(angle);
+  } else {
+    angle = ANGLE_DECL;
+    myServo.write(angle);
+  }
 }
+
 
 
 void roueGauche(int vitesse) {
