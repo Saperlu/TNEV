@@ -1,3 +1,6 @@
+// TURBO FANTÔME, LE ROBOT INEXISTANT QUI FUSE A LA VITESSE DU NEANT DISTORDU
+
+
 #include "ressources.h"
 
 int mode = STOP;
